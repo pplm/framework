@@ -5,4 +5,5 @@ this framework will integrate many kinds of middlewares like mybatis, redis etc.
 ##rest interface message format
 json format
 
+##about framework name
 The framework name dudu comes from my baby's infant name 

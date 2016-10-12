@@ -10,6 +10,7 @@
 	<artifactId>dudu</artifactId>
 	<packaging>war</packaging>
 	<name>dudu</name>
+	<version>1.0.0</version>
 	<description>spring rest framework</description>
 
 	<properties>

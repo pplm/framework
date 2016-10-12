@@ -3,14 +3,10 @@ package org.pplm.framework.spring.dudu.utils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import static org.pplm.framework.spring.dudu.utils.Constant.*;
+
 @JsonInclude(Include.NON_NULL)
 public class BusinessResponse<T> {
-	
-	public static final int RESPONSE_CODE_SUCCESS = 0;
-	public static final int RESPONSE_CODE_FAILURE = 1;
-	
-	public static final String RESPONSE_MESSAGE_SUCCESS = "success";
-	public static final String RESPONSE_MESSAGE_FAILURE = "failure";
 	
 	private int code;
 	private String message;
@@ -71,9 +67,9 @@ public class BusinessResponse<T> {
 	
 	public static <T> BusinessResponse<T> success(String message, T body) {
 		if (message == null) {
-			message = RESPONSE_MESSAGE_SUCCESS;
+			message = BUSINESS_RESPONSE_MESSAGE_SUCCESS;
 		}
-		return new BusinessResponse<T>(RESPONSE_CODE_SUCCESS, message, body);
+		return new BusinessResponse<T>(BUSINESS_RESPONSE_CODE_SUCCESS, message, body);
 	}
 	
 	public static <T> BusinessResponse<T> failure() {
@@ -86,9 +82,9 @@ public class BusinessResponse<T> {
 	
 	public static <T> BusinessResponse<T> failure(String message, T body) {
 		if (message == null) {
-			message = RESPONSE_MESSAGE_FAILURE;
+			message = BUSINESS_RESPONSE_MESSAGE_FAILURE;
 		}
-		return new BusinessResponse<T>(RESPONSE_CODE_FAILURE, message, body);
+		return new BusinessResponse<T>(BUSINESS_RESPONSE_CODE_FAILURE, message, body);
 	}
 	
 	public static <T> BusinessResponse<T> build(int code, String message, T body) {

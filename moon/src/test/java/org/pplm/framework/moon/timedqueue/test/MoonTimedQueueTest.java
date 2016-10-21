@@ -12,7 +12,8 @@ public class MoonTimedQueueTest {
 		moonTimedQueueConfig.setInterval(5000);
 		moonTimedQueueConfig.setProcessLimit(23);
 		moonTimedQueueConfig.setProcessWaitTimes(3);
-		MoonTimedQueue<Integer> moonTimedQueue = new MoonTimedQueue<>(moonTimedQueueConfig);
+		MoonTimedQueue<Integer> moonTimedQueue = new MoonTimedQueue<>("test");
+		moonTimedQueue.setConfig(moonTimedQueueConfig);
 		moonTimedQueue.startup();
 		int i = 0;
 		Thread.sleep(12000);

@@ -2,9 +2,6 @@ package org.pplm.framework.moon;
 
 import java.util.UUID;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,33 +35,21 @@ public abstract class Moon {
 		this.name = name;
 	}
 
-	public Moon(MoonConfig config) {
-		super();
-		this.config = config;
-	}
-
-	public Moon(String name, MoonConfig config) {
-		super();
-		this.name = name;
-		this.config = config;
-	}
-
 	protected abstract void moonInit();
 
 	protected abstract void moonExecute();
 
 	protected abstract void moonClear();
 
-	@PostConstruct
 	public final boolean init() {
-		if (status != MoonStatus.NEW) {
-			logger.warn("moon [" + name + "] is not NEW status, init failed");
-			return false;
-		}
-		status = MoonStatus.INITIALIZING;
 		if (name == null) {
 			name = UUID.randomUUID().toString();
 		}
+		if (status != MoonStatus.NEW) {
+			logger.warn("[" + name + "] is not [" + MoonStatus.NEW + "] status, init failed");
+			return false;
+		}
+		status = MoonStatus.INITIALIZING;
 		moonInit();
 		if (config == null) {
 			config = new MoonConfig();
@@ -72,8 +57,8 @@ public abstract class Moon {
 		config.validation();
 		moonThread = new Thread(this::moonRun, name);
 		status = MoonStatus.READY;
-		logger.info("moon [" + name + "] config [" + config.toString() + "]");
-		logger.info("moon [" + name + "] initialize success");
+		logger.info("[" + name + "] config [" + config.toString() + "]");
+		logger.info("[" + name + "] initialize success");
 		return true;
 	}
 
@@ -81,13 +66,13 @@ public abstract class Moon {
 		while (true) {
 			switch (status) {
 			case NEW:
-				logger.warn("moon [" + name + "] is not initialized, begin to initialize");
+				logger.info("[" + name + "] is uninitialized, begin to initialize");
 				init();
 				break;
 			case INITIALIZING:
 				int times = 0;
 				while (times++ <= 3 && status != MoonStatus.READY) {
-					logger.warn("moon [" + name + "] is initializing, wait 1 seconds");
+					logger.warn("[" + name + "] is initializing, wait 1 seconds");
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {
@@ -96,35 +81,34 @@ public abstract class Moon {
 					}
 				}
 				if (status != MoonStatus.READY) {
-					throw new RuntimeException("moon [" + name + "] initialize failed");
+					throw new RuntimeException("[" + name + "] initialize failed");
 				}
 				break;
 			case READY:
 				moonThread.start();
 				return true;
 			case RUNNING:
-				logger.warn("moon [" + name + "] has started up");
+				logger.warn("[" + name + "] has started up");
 				return false;
 			case STOPPING:
-				logger.warn("moon [" + name + "] is stopping");
+				logger.warn("[" + name + "] is stopping");
 				return false;
 			case STOPPED:
-				logger.warn("moon [" + name + "] has stopped");
+				logger.warn("[" + name + "] has stopped");
 				return false;
 			case CLEARED:
-				logger.warn("moon [" + name + "] has cleared");
+				logger.warn("[" + name + "] has cleared");
 				return false;
 			}
 		}
 	}
 
-	@PreDestroy
 	public final boolean clear() {
 		if (status != MoonStatus.RUNNING) {
-			logger.warn("moon [" + name + "] is not RUNNING status, clear failed");
+			logger.warn("[" + name + "] is not RUNNING status, clear failed");
 			return false;
 		}
-		logger.info("moon [" + name + "] clear begin");
+		logger.info("[" + name + "] clear begin");
 		status = MoonStatus.STOPPING;
 		int clearWaitTimes = 0;
 		while (clearWaitTimes++ < config.clearWaitTimes) {
@@ -136,15 +120,15 @@ public abstract class Moon {
 			if (status == MoonStatus.STOPPED) {
 				break;
 			}
-			logger.info("moon [" + name + "] stopping wait times [" + clearWaitTimes + "]");
+			logger.info("[" + name + "] stopping wait times [" + clearWaitTimes + "]");
 		}
 		moonClear();
 		if (status != MoonStatus.STOPPED) {
-			logger.error("moon [" + name + "] stopping timeout, wait times [" + clearWaitTimes + "], clear failed");
+			logger.error("[" + name + "] stopping timeout, wait times [" + clearWaitTimes + "], clear failed");
 			return false;
 		} else {
 			this.status = MoonStatus.CLEARED;
-			logger.info("moon [" + name + "] clear finish");
+			logger.info("[" + name + "] clear finish");
 		}
 		return true;
 	}
@@ -154,7 +138,7 @@ public abstract class Moon {
 		long interval = config.interval;
 		long timeCount = 0;
 		status = MoonStatus.RUNNING;
-		logger.info("moon [" + name + "] start up");
+		logger.info("[" + name + "] start up");
 		while (true) {
 			try {
 				Thread.sleep(loopTime);
@@ -175,7 +159,7 @@ public abstract class Moon {
 			}
 		}
 		status = MoonStatus.STOPPED;
-		logger.info("moon [" + name + "] stopped");
+		logger.info("[" + name + "] stopped");
 	}
 
 	public String getName() {

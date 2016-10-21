@@ -1,6 +1,7 @@
 package org.pplm.framework.moon.timedqueue;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -16,10 +17,7 @@ public class MoonTimedQueue<T> extends Moon {
 	private List<T> buffer;
 	private List<T> processingBuffer;
 
-	private Function<List<T>, Integer> process = x -> {
-		x.stream().map(String::valueOf).forEach(logger::info);
-		return x.size();
-	};
+	private Function<List<T>, Integer> process;
 
 	private MoonTimedQueueConfig config;
 
@@ -32,16 +30,6 @@ public class MoonTimedQueue<T> extends Moon {
 
 	public MoonTimedQueue() {
 		super();
-	}
-
-	public MoonTimedQueue(MoonTimedQueueConfig config) {
-		super(config);
-		this.config = config;
-	}
-
-	public MoonTimedQueue(String name, MoonTimedQueueConfig config) {
-		super(name, config);
-		this.config = config;
 	}
 
 	public MoonTimedQueue(String name) {
@@ -64,6 +52,13 @@ public class MoonTimedQueue<T> extends Moon {
 			throw new RuntimeException("[" + name + "] should be [READY] or [RUNNING] status");
 		}
 		this.buffer.add(e);
+	}
+	
+	public void addAll(Collection<T> c) {
+		if (status != MoonStatus.READY && status != MoonStatus.RUNNING) {
+			throw new RuntimeException("[" + name + "] should be [" + MoonStatus.READY + "] or [" + MoonStatus.RUNNING + "] status");
+		}
+		this.buffer.addAll(c);
 	}
 
 	public int unprocessedCount() {
@@ -147,6 +142,16 @@ public class MoonTimedQueue<T> extends Moon {
 
 	private List<T> initBuffer() {
 		return Collections.synchronizedList(new ArrayList<>(config.initBufferSize));
+	}
+
+	public MoonTimedQueueConfig getConfig() {
+		return new MoonTimedQueueConfig(config);
+	}
+
+	public void setConfig(MoonTimedQueueConfig config) {
+		config.validation();
+		super.setConfig(config);
+		this.config = config;
 	}
 
 	public static class Count {

@@ -19,15 +19,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * reader config from env, properties, or any other things.
- * get va
+ * reader config from env, properties, or any other things. get va
+ * 
  * @author OracleGao
  *
  */
 public class ConfigPlayer {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(ConfigPlayer.class);
-	
+
 	public static final String DEFAULT_ENCODING = "UTF-8";
 
 	private final static ConfigPlayer player = new ConfigPlayer();
@@ -60,21 +60,21 @@ public class ConfigPlayer {
 	public static boolean getBoolean(String key, boolean defaultValue) {
 		try {
 			String value = player.getValue(key);
-			if (value == null) {
-				return defaultValue;
-			}
-			return Boolean.parseBoolean(value);
+			return value == null ? defaultValue : Boolean.parseBoolean(value);
 		} catch (Exception e) {
-			logger.warn(key + " get boolean value exception [" + e.getMessage() + "] use default value [" + defaultValue + "] instead");
+			logger.warn(key + " get boolean value exception [" + e.getMessage() + "] use default value [" + defaultValue
+					+ "] instead");
 		}
 		return defaultValue;
 	}
 
 	public static long getLong(String key, long defaultValue) {
 		try {
-			return Long.parseLong(player.getValue(key));
+			String value = player.getValue(key);
+			return value == null ? defaultValue : Long.parseLong(value);
 		} catch (Exception e) {
-			logger.warn(key + " get long value exception [" + e.getMessage() + "] use default value [" + defaultValue + "] instead");
+			logger.warn(key + " get long value exception [" + e.getMessage() + "] use default value [" + defaultValue
+					+ "] instead");
 		}
 		return defaultValue;
 	}
@@ -85,9 +85,11 @@ public class ConfigPlayer {
 
 	public static int getInt(String key, int defaultValue) {
 		try {
-			return Integer.parseInt(player.getValue(key));
+			String value = player.getValue(key);
+			return value == null ? defaultValue : Integer.parseInt(value);
 		} catch (Exception e) {
-			logger.warn(key + " get int value exception [" + e.getMessage() + "] use default value [" + defaultValue + "] instead");
+			logger.warn(key + " get int value exception [" + e.getMessage() + "] use default value [" + defaultValue
+					+ "] instead");
 		}
 		return defaultValue;
 	}
@@ -98,9 +100,11 @@ public class ConfigPlayer {
 
 	public static double getDouble(String key, double defaultValue) {
 		try {
-			return Double.parseDouble(player.getValue(key));
+			String value = player.getValue(key);
+			return value == null ? defaultValue : Double.parseDouble(value);
 		} catch (Exception e) {
-			logger.warn(key + " get double value exception [" + e.getMessage() + "] use default value [" + defaultValue + "] instead");
+			logger.warn(key + " get double value exception [" + e.getMessage() + "] use default value [" + defaultValue
+					+ "] instead");
 		}
 		return defaultValue;
 	}
@@ -135,7 +139,7 @@ public class ConfigPlayer {
 			this.keyFormatSupports.add(this::lplSupport);
 		}
 	}
-	
+
 	public void addKeyFormatSupport(Function<String, String> keyFormatSupport) {
 		this.keyFormatSupports.add(keyFormatSupport);
 	}
@@ -143,7 +147,7 @@ public class ConfigPlayer {
 	public Function<String, String> getKeyFormatSupport(int index) {
 		return this.keyFormatSupports.get(index);
 	}
-	
+
 	public Function<String, String> removeKeyFormatSupport(int index) {
 		return this.keyFormatSupports.remove(index);
 	}
@@ -155,7 +159,7 @@ public class ConfigPlayer {
 	public List<Function<String, String>> getKeyFormatSupports() {
 		return new ArrayList<>(keyFormatSupports);
 	}
-	
+
 	public boolean addP(Properties properties) {
 		for (Entry<Object, Object> entry : properties.entrySet()) {
 			map.put(entry.getKey().toString(), entry.getValue().toString());
@@ -166,7 +170,7 @@ public class ConfigPlayer {
 	public static ConfigPlayer getInstance() {
 		return player;
 	}
-	
+
 	public static boolean addProperties(Properties properties) {
 		return player.addP(properties);
 	}
@@ -174,7 +178,7 @@ public class ConfigPlayer {
 	public static boolean addProperties(String fileSource) throws IOException {
 		return addProperties(fileSource, DEFAULT_ENCODING);
 	}
-	
+
 	public static boolean addProperties(String fileSource, String encoding) throws IOException {
 		File file = new File(fileSource);
 		if (file.exists()) {
@@ -209,17 +213,18 @@ public class ConfigPlayer {
 	}
 
 	/**
-	 * lower-point-lower key format support function
-	 * "timed.queue.process.limit" key gets the same value as "TIMED_QUEUE_PROCESS_LIMIT" key
+	 * lower-point-lower key format support function "timed.queue.process.limit"
+	 * key gets the same value as "TIMED_QUEUE_PROCESS_LIMIT" key
 	 */
 	private String lplSupport(String key) {
 		return key.replaceAll("\\.", "_").toUpperCase();
-	} 
-	
+	}
+
 	public enum KeyFormatSupport {
 		/**
 		 * lower-point-lower key format support function
-		 * "timed.queue.process.limit" key gets the same value as "TIMED_QUEUE_PROCESS_LIMIT" key
+		 * "timed.queue.process.limit" key gets the same value as
+		 * "TIMED_QUEUE_PROCESS_LIMIT" key
 		 */
 		LPL;
 	}

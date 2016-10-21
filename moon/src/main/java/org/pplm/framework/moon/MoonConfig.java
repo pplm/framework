@@ -26,11 +26,22 @@ public class MoonConfig {
 	long clearWait;
 	int clearWaitTimes;
 	
+	private boolean validated;
+	
 	public MoonConfig() {
 		super();
 		init();
 	}
 
+	public MoonConfig(MoonConfig config) {
+		super();
+		loopTime = config.loopTime;
+		interval = config.interval;
+		clearWait = config.clearWait;
+		clearWaitTimes = config.clearWaitTimes;
+		validated = config.validated;
+	}
+	
 	private void init() {
 		this.loopTime = ConfigPlayer.getLong(KEY_LOOP_TIME, DEFAULT_LOOP_TIME);
 		this.interval = ConfigPlayer.getLong(KEY_INTERVAL, DEFAULT_INTERVAL);
@@ -39,21 +50,24 @@ public class MoonConfig {
 	}
 	
 	public void validation() {
-		if (loopTime < MIN_LOOP_TIME) {
-			logger.warn(KEY_LOOP_TIME + " value [" + loopTime + "] less than min value [" + MIN_LOOP_TIME + "], use min value instead.");
-			loopTime = MIN_LOOP_TIME;
-		}
-		if (interval < loopTime) {
-			logger.warn(KEY_INTERVAL + " value [" + interval + "] less than loopTime [" + KEY_LOOP_TIME + "], use loopTime value [" + loopTime + "] instead.");
-			interval = loopTime;
-		}
-		if (clearWait < MIN_CLEAR_WAIT) {
-			logger.warn(KEY_CLEAR_WAIT + " value [" + clearWait + "] less than min value [" + MIN_CLEAR_WAIT + "], use min value instead.");
-			clearWait = MIN_CLEAR_WAIT;
-		}
-		if (clearWaitTimes < MIN_CLEAR_WAIT_TIMES) {
-			logger.warn(KEY_CLEAR_WAIT_TIMES + " value [" + clearWaitTimes + "] less than min value [" + MIN_CLEAR_WAIT_TIMES + "], use min value instead.");
-			clearWaitTimes = MIN_CLEAR_WAIT_TIMES;
+		if (!validated) {
+			if (loopTime < MIN_LOOP_TIME) {
+				logger.warn(KEY_LOOP_TIME + " value [" + loopTime + "] less than min value [" + MIN_LOOP_TIME + "], use min value instead.");
+				loopTime = MIN_LOOP_TIME;
+			}
+			if (interval < loopTime) {
+				logger.warn(KEY_INTERVAL + " value [" + interval + "] less than loopTime [" + KEY_LOOP_TIME + "], use loopTime value [" + loopTime + "] instead.");
+				interval = loopTime;
+			}
+			if (clearWait < MIN_CLEAR_WAIT) {
+				logger.warn(KEY_CLEAR_WAIT + " value [" + clearWait + "] less than min value [" + MIN_CLEAR_WAIT + "], use min value instead.");
+				clearWait = MIN_CLEAR_WAIT;
+			}
+			if (clearWaitTimes < MIN_CLEAR_WAIT_TIMES) {
+				logger.warn(KEY_CLEAR_WAIT_TIMES + " value [" + clearWaitTimes + "] less than min value [" + MIN_CLEAR_WAIT_TIMES + "], use min value instead.");
+				clearWaitTimes = MIN_CLEAR_WAIT_TIMES;
+			}
+			validated = true;
 		}
 	}
 

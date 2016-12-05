@@ -9,18 +9,22 @@ public class MoonTimedQueueTest {
 	public void test() throws InterruptedException {
 
 		MoonTimedQueueConfig moonTimedQueueConfig = new MoonTimedQueueConfig();
-		moonTimedQueueConfig.setInterval(5000);
-		moonTimedQueueConfig.setProcessLimit(23);
+		moonTimedQueueConfig.setInterval(2000);
+		moonTimedQueueConfig.setProcessLimit(18);
 		moonTimedQueueConfig.setProcessWaitTimes(3);
 		MoonTimedQueue<Integer> moonTimedQueue = new MoonTimedQueue<>("test");
 		moonTimedQueue.setConfig(moonTimedQueueConfig);
+		moonTimedQueue.setProcess(elements -> {
+			elements.forEach(System.out::println);
+			return elements.size();
+		});
 		moonTimedQueue.startup();
 		int i = 0;
-		Thread.sleep(12000);
-		while(i++ < 97) {
-			Thread.sleep(600);
+		Thread.sleep(1500);
+		while(i++ < 40) {
+			Thread.sleep(300);
 			moonTimedQueue.add(i);
 		}
-		moonTimedQueue.clear();
+		moonTimedQueue.shutdown();
 	}
 }

@@ -103,12 +103,12 @@ public abstract class Moon {
 		}
 	}
 
-	public final boolean clear() {
+	public final boolean shutdown() {
 		if (status != MoonStatus.RUNNING) {
-			logger.warn("[" + name + "] is not RUNNING status, clear failed");
+			logger.warn("[" + name + "] is not RUNNING status, shutdown failed");
 			return false;
 		}
-		logger.info("[" + name + "] clear begin");
+		logger.info("[" + name + "] shutdown, begin to clear");
 		status = MoonStatus.STOPPING;
 		int clearWaitTimes = 0;
 		while (clearWaitTimes++ < config.clearWaitTimes) {
@@ -128,7 +128,7 @@ public abstract class Moon {
 			return false;
 		} else {
 			this.status = MoonStatus.CLEARED;
-			logger.info("[" + name + "] clear finish");
+			logger.info("[" + name + "] finish to clear, shutdown successfully");
 		}
 		return true;
 	}
@@ -138,7 +138,8 @@ public abstract class Moon {
 		long interval = config.interval;
 		long timeCount = 0;
 		status = MoonStatus.RUNNING;
-		logger.info("[" + name + "] start up");
+		logger.info("[" + name + "] startup");
+		logger.info("[" + name + "] thread begin");
 		while (true) {
 			try {
 				Thread.sleep(loopTime);
@@ -159,7 +160,7 @@ public abstract class Moon {
 			}
 		}
 		status = MoonStatus.STOPPED;
-		logger.info("[" + name + "] stopped");
+		logger.info("[" + name + "] thread stopped");
 	}
 
 	public String getName() {

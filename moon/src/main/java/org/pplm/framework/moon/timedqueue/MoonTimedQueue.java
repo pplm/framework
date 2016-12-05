@@ -38,6 +38,9 @@ public class MoonTimedQueue<T> extends Moon {
 
 	@Override
 	protected void moonInit() {
+		if (process == null) {
+			throw new RuntimeException("process function null");
+		}
 		count = new Count();
 		this.waitTimes = 0;
 		if (config == null) {

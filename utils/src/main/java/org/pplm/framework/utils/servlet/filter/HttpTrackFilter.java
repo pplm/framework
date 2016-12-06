@@ -92,7 +92,7 @@ public class HttpTrackFilter implements Filter {
 		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 		HttpTrackBean httpTrackBean = new HttpTrackBean();
 		
-		httpTrackBean.setUri(httpServletRequest.getRequestURI());
+		httpTrackBean.setUrl(httpServletRequest.getRequestURL().toString());
 		httpTrackBean.setMethod(httpServletRequest.getMethod());
 		httpTrackBean.setContentTypeRequest(httpServletRequest.getContentType());
 		if (!isTracked(httpTrackBean)) {
@@ -102,7 +102,7 @@ public class HttpTrackFilter implements Filter {
 		httpTrackBean.setParameters(httpServletRequest.getParameterMap());
 		httpTrackBean.setClientIp(getClientIp(httpServletRequest));
 		if (httpSessionTracker != null) {
-			httpTrackBean.setHttpSessionTrackingBean(httpSessionTracker.track(httpServletRequest.getSession(true)));
+			httpTrackBean.setHttpSession(httpSessionTracker.track(httpServletRequest.getSession(true)));
 		}
 		httpTrackBean.setHeadersRequest(getHeadersRequest(httpServletRequest));
 		httpTrackBean.setEncodingRequest(httpServletRequest.getCharacterEncoding());
@@ -141,9 +141,9 @@ public class HttpTrackFilter implements Filter {
 			return true;
 		}
 		for (HttpMatchPattern excludePattern : excludePatterns) {
-			if (excludePattern.isUrlMatch(httpTrackBean.getUri())
+			if (excludePattern.isUrlMatch(httpTrackBean.getUrl())
 					&& excludePattern.isMethodMatch(httpTrackBean.getMethod())
-					&& excludePattern.isContentTypeMatch(httpTrackBean.getContentTypeRequest())) {
+					&& excludePattern.isContentTypeMatch(StringUtils.trimToEmpty(httpTrackBean.getContentTypeRequest()))) {
 				return false;
 			}
 		}

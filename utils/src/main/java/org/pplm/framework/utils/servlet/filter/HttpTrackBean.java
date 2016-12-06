@@ -2,6 +2,9 @@ package org.pplm.framework.utils.servlet.filter;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * 
  * @author OracleGao
@@ -9,11 +12,11 @@ import java.util.Map;
  */
 public class HttpTrackBean {
 
-	private String uri;
+	private String url;
 	private String method;
 	private Map<String, String[]> parameters;
 	private String ClientIp;
-	private HttpSessionTrackBean httpSessionTrackingBean;
+	private HttpSessionTrackBean httpSession;
 	
 	private Map<String, String> headersRequest;
 	private String encodingRequest;
@@ -32,12 +35,12 @@ public class HttpTrackBean {
 		super();
 	}
 
-	public String getUri() {
-		return uri;
+	public String getUrl() {
+		return url;
 	}
 
-	public void setUri(String uri) {
-		this.uri = uri;
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 	public String getMethod() {
@@ -64,12 +67,12 @@ public class HttpTrackBean {
 		ClientIp = clientIp;
 	}
 
-	public HttpSessionTrackBean getHttpSessionTrackingBean() {
-		return httpSessionTrackingBean;
+	public HttpSessionTrackBean getHttpSession() {
+		return httpSession;
 	}
 
-	public void setHttpSessionTrackingBean(HttpSessionTrackBean httpSessionTrackingBean) {
-		this.httpSessionTrackingBean = httpSessionTrackingBean;
+	public void setHttpSession(HttpSessionTrackBean httpSession) {
+		this.httpSession = httpSession;
 	}
 
 	public Map<String, String> getHeadersRequest() {
@@ -160,4 +163,13 @@ public class HttpTrackBean {
 		this.statusResponse = statusResponse;
 	}
 
+	public String toJsonString() {
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			return objectMapper.writeValueAsString(this);
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException("never throw this exception", e);
+		}
+	}
+	
 }

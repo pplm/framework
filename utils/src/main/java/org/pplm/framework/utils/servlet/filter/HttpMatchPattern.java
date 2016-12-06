@@ -13,7 +13,7 @@ public class HttpMatchPattern {
 	public static final String DEFAULT_WILDCARD_ALL_MATCH = "*";
 	public static final String DEFAULT_SEPARATOR_PARSE = "::";
 	
-	public static final String DEFAULT_PATTERN = DEFAULT_WILDCARD_NONE_MATCH;
+	public static final String DEFAULT_PATTERN = DEFAULT_WILDCARD_ALL_MATCH;
 	
 	public static final HttpMatchPattern NONE_MATCH = new HttpMatchPattern(DEFAULT_WILDCARD_NONE_MATCH);
 	public static final HttpMatchPattern ALL_MATCH = new HttpMatchPattern(DEFAULT_WILDCARD_ALL_MATCH);
@@ -46,27 +46,27 @@ public class HttpMatchPattern {
 	}
 	
 	private boolean regularMatch(String value, String pattern) {
+		if (pattern.equals(DEFAULT_WILDCARD_NONE_MATCH)) {
+			return false;
+		}
+		if (pattern.equals(DEFAULT_WILDCARD_ALL_MATCH)) {
+			return true;
+		}
 		if (StringUtils.isBlank(value)) {
 			return false;
-		}
-		if (urlPattern.equals(DEFAULT_WILDCARD_NONE_MATCH)) {
-			return false;
-		}
-		if (urlPattern.equals(DEFAULT_WILDCARD_ALL_MATCH)) {
-			return true;
 		}
 		return value.matches(pattern);
 	} 
 	
 	private boolean caseMatch(String value, String pattern) {
+		if (pattern.equals(DEFAULT_WILDCARD_NONE_MATCH)) {
+			return false;
+		}
+		if (pattern.equals(DEFAULT_WILDCARD_ALL_MATCH)) {
+			return true;
+		}
 		if (StringUtils.isBlank(value)) {
 			return false;
-		}
-		if (urlPattern.equals(DEFAULT_WILDCARD_NONE_MATCH)) {
-			return false;
-		}
-		if (urlPattern.equals(DEFAULT_WILDCARD_ALL_MATCH)) {
-			return true;
 		}
 		return value.equalsIgnoreCase(pattern);
 	}

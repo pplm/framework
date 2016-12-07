@@ -116,6 +116,7 @@ public class MoonTimedQueue<T> extends Moon {
 	}
 
 	private void processing() {
+		long time = System.currentTimeMillis();
 		processingBuffer = buffer;
 		buffer = initBuffer();
 		processingCount = processingBuffer.size();
@@ -124,8 +125,8 @@ public class MoonTimedQueue<T> extends Moon {
 		count.addProcessed(processingCount);
 		count.addSuccess(processResultTemp);
 		count.addFailed(processingCount - processResultTemp);
-		logger.info("[{}] buffer processed [{}] success [{}] failed [{}]", name, processingCount, processResultTemp,
-				processingCount - processResultTemp);
+		logger.info("[{}] buffer processed [{}], success [{}], failed [{}], consume time [{}] ms", name, processingCount, processResultTemp,
+				processingCount - processResultTemp, System.currentTimeMillis() - time);
 	}
 
 	@Override

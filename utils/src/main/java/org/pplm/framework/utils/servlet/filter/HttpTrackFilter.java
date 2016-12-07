@@ -106,7 +106,7 @@ public class HttpTrackFilter implements Filter {
 		}
 		httpTrackBean.setHeadersRequest(getHeadersRequest(httpServletRequest));
 		httpTrackBean.setEncodingRequest(httpServletRequest.getCharacterEncoding());
-		if (bodyClipRequestSize > 0) {
+		if (httpServletRequest.getContentLength() > 0 && bodyClipRequestSize > 0) {
 			httpServletRequest = new BufferedStreamHttpServletRequest(httpServletRequest);
 			httpTrackBean.setBodyClipRequest(getBodyClipRequest(httpServletRequest.getInputStream()));
 		}

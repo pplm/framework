@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class LogHttpSessionTracker implements HttpSessionTrackI {
+public class LogHttpSessionTracker implements HttpSessionTrackI<HttpSessionTrackBean> {
 
 	private static Logger logger = LoggerFactory.getLogger(LogHttpSessionTracker.class);
 	private ObjectMapper objectMapper = new ObjectMapper();

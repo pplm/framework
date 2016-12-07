@@ -8,10 +8,10 @@ import javax.servlet.http.HttpSession;
  * @author OracleGao
  *
  */
-public interface HttpSessionTrackI {
+public interface HttpSessionTrackI<T extends HttpSessionTrackBean> {
 	public void init(FilterConfig filterConfig);
 	
-	public HttpSessionTrackBean track(HttpSession httpSession);
+	public T track(HttpSession httpSession);
 	
 	public void destroy();
 }

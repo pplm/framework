@@ -40,7 +40,7 @@ public class HttpTrackFilter implements Filter {
 	
 	public static final int DEFAULT_BODY_CLIP_REQUEST_SIZE = 2000;
 	
-	private HttpSessionTrackI httpSessionTracker;
+	private HttpSessionTrackI<?> httpSessionTracker;
 	private HttpTrackProcessI httpTrackProcesser;
 	
 	private Collection<HttpMatchPattern> excludePatterns;
@@ -68,7 +68,7 @@ public class HttpTrackFilter implements Filter {
 		temp = filterConfig.getInitParameter(KEY_HTTP_SESSION_TRACKER);
 		if (StringUtils.isNoneEmpty(temp)) {
 			try {
-				httpSessionTracker = (HttpSessionTrackI) Class.forName(temp).newInstance();
+				httpSessionTracker = (HttpSessionTrackI<?>) Class.forName(temp).newInstance();
 				httpSessionTracker.init(filterConfig);
 			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 				logger.warn(e.getMessage());

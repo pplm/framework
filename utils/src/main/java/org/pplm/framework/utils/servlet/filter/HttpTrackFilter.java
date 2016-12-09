@@ -99,7 +99,7 @@ public class HttpTrackFilter implements Filter {
 			chain.doFilter(httpServletRequest, response);
 			return;
 		}
-		httpTrackBean.setParameters(httpServletRequest.getParameterMap());
+		httpTrackBean.setParameters(new HashMap<String, String[]>(httpServletRequest.getParameterMap()));
 		httpTrackBean.setClientIp(getClientIp(httpServletRequest));
 		if (httpSessionTracker != null) {
 			httpTrackBean.setHttpSession(httpSessionTracker.track(httpServletRequest.getSession(true)));

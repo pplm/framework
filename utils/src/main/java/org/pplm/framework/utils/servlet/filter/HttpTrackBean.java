@@ -16,7 +16,8 @@ public class HttpTrackBean {
 	private String method;
 	private Map<String, String[]> parameters;
 	private String ClientIp;
-	private HttpSessionTrackBean httpSession;
+	private HttpSessionTrackBeanable httpSession;
+	private PrincipalTrackBeanable principal;
 	
 	private Map<String, String> headersRequest;
 	private String encodingRequest;
@@ -67,12 +68,28 @@ public class HttpTrackBean {
 		ClientIp = clientIp;
 	}
 
-	public HttpSessionTrackBean getHttpSession() {
+	public HttpSessionTrackBeanable getHttpSession() {
 		return httpSession;
 	}
 
-	public void setHttpSession(HttpSessionTrackBean httpSession) {
+	public <T extends HttpSessionTrackBeanable> T getHttpSession(Class<T> clazz) throws ClassCastException {
+		return clazz.cast(httpSession);
+	}
+	
+	public void setHttpSession(HttpSessionTrackBeanable httpSession) {
 		this.httpSession = httpSession;
+	}
+
+	public PrincipalTrackBeanable getPrincipal() {
+		return principal;
+	}
+	
+	public <T extends PrincipalTrackBeanable> T getPrincipal(Class<T> clazz) throws ClassCastException {
+		return clazz.cast(principal);
+	}
+
+	public void setPrincipal(PrincipalTrackBeanable principal) {
+		this.principal = principal;
 	}
 
 	public Map<String, String> getHeadersRequest() {

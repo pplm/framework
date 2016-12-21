@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class LogHttpSessionTracker implements HttpSessionTrackI<HttpSessionTrackBean> {
+public class LogHttpSessionTracker implements HttpSessionTrack<HttpSessionTrackBeanable> {
 
 	private static Logger logger = LoggerFactory.getLogger(LogHttpSessionTracker.class);
 	private ObjectMapper objectMapper = new ObjectMapper();
@@ -23,7 +23,7 @@ public class LogHttpSessionTracker implements HttpSessionTrackI<HttpSessionTrack
 	public void init(FilterConfig filterConfig) {}
 
 	@Override
-	public HttpSessionTrackBean track(HttpSession httpSession) {
+	public HttpSessionTrackBeanable track(HttpSession httpSession) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<String> keys = Collections.list(httpSession.getAttributeNames());
 		for (String key : keys) {

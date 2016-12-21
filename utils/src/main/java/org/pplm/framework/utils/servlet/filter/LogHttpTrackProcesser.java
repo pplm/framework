@@ -5,7 +5,7 @@ import javax.servlet.FilterConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LogHttpTrackProcesser implements HttpTrackProcessI {
+public class LogHttpTrackProcesser implements HttpTrackProcess {
 
 	private static Logger logger = LoggerFactory.getLogger(LogHttpTrackProcesser.class);
 	

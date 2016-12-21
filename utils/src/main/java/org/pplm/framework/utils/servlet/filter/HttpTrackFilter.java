@@ -25,6 +25,11 @@ import org.pplm.framework.utils.servlet.wapper.BufferedStreamHttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 
+ * @author OracleGao
+ *
+ */
 public class HttpTrackFilter implements Filter {
 
 	private static Logger logger = LoggerFactory.getLogger(HttpTrackFilter.class);
@@ -33,6 +38,7 @@ public class HttpTrackFilter implements Filter {
 	
 	public static final String KEY_HTTP_SESSION_TRACKER = "httpSessionTracker";
 	public static final String KEY_HTTP_TRACKER_PROCESSER = "httpTrackProcesser";
+	public static final String KEY_HTTP_PRINCIPAL_PROCESSER = "httpPrincipalProcesser";
 	
 	public static final String KEY_BODY_CLIP_REQUEST_SIZE = "bodyClipRequestSize";
 	
@@ -40,8 +46,9 @@ public class HttpTrackFilter implements Filter {
 	
 	public static final int DEFAULT_BODY_CLIP_REQUEST_SIZE = 2000;
 	
-	private HttpSessionTrackI<?> httpSessionTracker;
-	private HttpTrackProcessI httpTrackProcesser;
+	private HttpSessionTrack<?> httpSessionTracker;
+	private HttpTrackProcess httpTrackProcesser;
+	private PrincipalTrack<?> httpPrincipalTracker;
 	
 	private Collection<HttpMatchPattern> excludePatterns;
 	
@@ -64,28 +71,12 @@ public class HttpTrackFilter implements Filter {
 				logger.warn(e.getMessage());
 			}
 		}
-		
-		temp = filterConfig.getInitParameter(KEY_HTTP_SESSION_TRACKER);
-		if (StringUtils.isNoneEmpty(temp)) {
-			try {
-				httpSessionTracker = (HttpSessionTrackI<?>) Class.forName(temp).newInstance();
-				httpSessionTracker.init(filterConfig);
-			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-				logger.warn(e.getMessage());
-			}
-		}
-		
-		temp = filterConfig.getInitParameter(KEY_HTTP_TRACKER_PROCESSER);
-		if (StringUtils.isNoneEmpty(temp)) {
-			try {
-				httpTrackProcesser = (HttpTrackProcessI) Class.forName(temp).newInstance();
-				httpTrackProcesser.init(filterConfig);
-			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-				logger.warn(e.getMessage());
-			}
-		}
-	}
 
+		httpTrackProcesser = initProcesser(filterConfig.getInitParameter(KEY_HTTP_TRACKER_PROCESSER), HttpTrackProcess.class, filterConfig);
+		httpSessionTracker = initProcesser(filterConfig.getInitParameter(KEY_HTTP_SESSION_TRACKER), HttpSessionTrack.class, filterConfig);
+		httpPrincipalTracker = initProcesser(filterConfig.getInitParameter(KEY_HTTP_PRINCIPAL_PROCESSER), PrincipalTrack.class, filterConfig);
+	}
+	
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
@@ -112,6 +103,10 @@ public class HttpTrackFilter implements Filter {
 		}
 		httpTrackBean.setTrackTimeRequest(System.currentTimeMillis());
 		
+		if (httpPrincipalTracker != null) {
+			httpTrackBean.setPrincipal(httpPrincipalTracker.track(httpServletRequest.getUserPrincipal()));
+		}
+
 		chain.doFilter(httpServletRequest, response);
 		
 		httpTrackBean.setTrackTimeResponse(System.currentTimeMillis());
@@ -134,8 +129,11 @@ public class HttpTrackFilter implements Filter {
 		if (httpTrackProcesser != null) {
 			httpTrackProcesser.destroy();
 		}
+		if (httpPrincipalTracker != null) {
+			httpPrincipalTracker.destroy();
+		}
 	}
-
+	
 	protected boolean isTracked(HttpTrackBean httpTrackBean) {
 		if (excludePatterns == null || excludePatterns.size() == 0) {
 			return true;
@@ -211,6 +209,21 @@ public class HttpTrackFilter implements Filter {
 			patterns.add(HttpMatchPattern.parse(item));
 		}
 		return patterns;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private <T extends FilterProcess> T initProcesser(String className, Class<T> clazz, FilterConfig filterConfig) {
+		if (StringUtils.isEmpty(className)) {
+			return null;
+		}
+		try {
+			T filterProcess = (T) Class.forName(className).newInstance();
+			filterProcess.init(filterConfig);
+			return filterProcess;
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			logger.warn(e.getMessage());
+		}
+		return null;
 	}
 	
 }

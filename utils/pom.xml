@@ -10,7 +10,7 @@
 	<artifactId>utils</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.commons</groupId>

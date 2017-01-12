@@ -1,0 +1,11 @@
+cas.sso.enable=true
+cas.server.url.prefix=https://localhost:8443/cas
+cas.server.url.sign.on.suffix=/login
+cas.server.url.sign.out.suffix=/logout
+
+app.server.url.prefix=http://localhost:8080/tub
+app.server.url.sign.out.suffix=/logout
+app.server.url.excluded.patterns=*::.*/data,get::.*/health
+
+##comeing soon
+##cas.sso.principal.header.mapping.patterns=user_id::userId,username,role_id::roleId

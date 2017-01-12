@@ -1,0 +1,2 @@
+cas.ssl.trust.store=cas.truststore
+cas.ssl.trust.store.password=changeit

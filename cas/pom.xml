@@ -12,7 +12,7 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>client</module>
+		<module>cas-client</module>
 		<module>jwt-token</module>
 	</modules>
 
